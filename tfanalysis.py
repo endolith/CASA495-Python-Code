@@ -18,7 +18,7 @@ def tfanalysis(x,awin,timestep,numfreq):
     numtime=math.ceil((nsamp-wlen+1)/timestep)
     tfmat=np.zeros((numfreq,numtime+1))+0j
     sind=None
-    for i in range(0,numtime):
+    for i in range(numtime):
         sind=((i)*timestep)
         tfmat[:,i]=fft(x[sind:(sind+wlen)]*awin,numfreq)
     i=i+1

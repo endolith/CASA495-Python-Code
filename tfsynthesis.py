@@ -15,11 +15,11 @@ def tfsynthesis(timefreqmat,swin,timestep,numfreq):
 	swin=np.reshape(swin,-1,'F')
 	winlen=swin.size
 	(numfreq, numtime)=timefreqmat.shape
-	ind=np.fmod(np.array(range(0,winlen)),numfreq)
+	ind = np.fmod(np.array(range(winlen)), numfreq)
 	x=np.zeros(((numtime-1)*timestep+winlen))
-	for i in range(0,numtime):
+	for i in range(numtime):
 		temp=numfreq*np.real(ifft(timefreqmat[:,i]))
 		sind=((i)*timestep)
-		for i in range(0,winlen):
+		for i in range(winlen):
 			x[sind+i]=x[sind+i]+temp[ind[i]]*swin[i]
 	return x	

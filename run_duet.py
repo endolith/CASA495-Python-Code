@@ -17,7 +17,7 @@ from twoDsmooth import twoDsmooth
 # 1) Create the spectrogram of the Left and Right channels.
 
 #constants used
-pi=3.14159265359    
+pi=3.14159265359
 eps=2.2204e-16
 wlen=1024;
 timestep=512;
@@ -80,18 +80,16 @@ delta = -(np.imag((np.log(R21)/fmat)))
 #    the height at any phase/amplitude is the count of time-frequency bins that
 #    have approximately that phase/amplitude.
 
-p=1; q=0;
+p=1
+q=0;
 h1=np.power(np.multiply(np.absolute(tf1),np.absolute(tf2)),p) #refer to run_duet.m line 45 for this. It's just the python translation of matlab 
 h2=np.power(np.absolute(fmat),q)
 
 tfweight=np.multiply(h1,h2) #weights vector 
 maxa=0.7;
-maxd=3.6;#histogram boundaries for alpha, delta
-
+maxd=3.6
 abins=35;
-dbins=50;#number of hist bins for alpha, delta
-
-
+dbins=50
 # only consider time-freq points yielding estimates in bounds
 amask=(abs(alpha)<maxa)&(abs(delta)<maxd)
 amask=np.logical_not(amask)
@@ -168,21 +166,21 @@ for i in range(peakalpha.size):
 
 est=np.zeros((numsources,x1.shape[1]))
 (row,col)=bestind.shape
-for i in range(0,numsources):
-	mask=ma.masked_equal(bestind,i+1).mask
-	# here, 'h' stands for helper; we're using helper variables to break down the logic of
-	# what's going on. Apologies for the order of the 'h's
-	h1=np.zeros((1,tf1.shape[1]))
-	h3=np.multiply((peaka[i]*np.exp(1j*fmat*peakdelta[i])),tf2)
-	h4=((tf1+h3)/(1+peaka[i]*peaka[i]))
-	h2=np.multiply(h4,mask)
-	h=np.concatenate((h1,h2))
+for i in range(numsources):
+    mask=ma.masked_equal(bestind,i+1).mask
+    # here, 'h' stands for helper; we're using helper variables to break down the logic of
+    # what's going on. Apologies for the order of the 'h's
+    h1=np.zeros((1,tf1.shape[1]))
+    h3=np.multiply((peaka[i]*np.exp(1j*fmat*peakdelta[i])),tf2)
+    h4=((tf1+h3)/(1+peaka[i]*peaka[i]))
+    h2=np.multiply(h4,mask)
+    h=np.concatenate((h1,h2))
 
-	esti=tfsynthesis(h,math.sqrt(2)*awin/1024,timestep,numfreq)
+    esti=tfsynthesis(h,math.sqrt(2)*awin/1024,timestep,numfreq)
 
-	#add back into the demix a little bit of the mixture
+    	#add back into the demix a little bit of the mixture
     #as that eliminates most of the masking artifacts
 
-	est[i]=esti[0:x1.shape[1]]
-	write('out'+str(i),fs,np.asarray(est[i]+0.05*x1)[0])
+    est[i] = esti[:x1.shape[1]]
+    write(f'out{str(i)}', fs, np.asarray(est[i]+0.05*x1)[0])
 	
